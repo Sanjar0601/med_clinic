@@ -73,7 +73,7 @@ def register_manager(request):
             messages.error(request, 'Manager registration failed. Please correct the errors.')
     else:
         form = ManagerRegistrationForm()
-    return render(request, 'register_manager.html', {'form': form})
+    return render(request, 'users/register_manager.html', {'form': form})
 
 
 def login_user(request):
@@ -100,7 +100,7 @@ def login_user(request):
             messages.error(request, 'Invalid username or password.')
     else:
         form = UserLoginForm()
-    return render(request, 'login.html', {'form': form})
+    return render(request, 'users/login.html', {'form': form})
 
 
 @login_required
@@ -131,7 +131,7 @@ def add_doctor(request):
         'message': "Add a new Doctor",
         'form': form
     }
-    return render(request, 'add_doctor.html', context)
+    return render(request, 'users/add_doctor.html', context)
 
 
 # The add_patient view is now consolidated into manager_dashboard and has been removed from here.
@@ -150,7 +150,7 @@ def home_dashboard(request):
     elif request.user.is_patient:
         return redirect('patient_dashboard')
     else:
-        # Fallback for users with no recognized role (should't happen with default)
+        # Fallback for users with no recognized role (shouldn't happen with default)
         messages.error(request, "Your account has an unrecognized role. Please contact support.")
         logout(request)
         return redirect('login')
@@ -186,7 +186,7 @@ def manager_dashboard(request):
         'patient_form': PatientRegistrationForm(),  # We re-instantiate the form for GET requests
         'patients': patients,
     }
-    return render(request, 'manager_dashboard.html', context)
+    return render(request, 'users/manager_dashboard.html', context)
 
 
 @doctor_required
@@ -194,7 +194,7 @@ def doctor_dashboard(request):
     """
     Dashboard for Doctor role.
     """
-    return render(request, 'doctor_dashboard.html', {'message': "Welcome, Doctor! Here's your dashboard."})
+    return render(request, 'users/doctor_dashboard.html', {'message': "Welcome, Doctor! Here's your dashboard."})
 
 
 @patient_required
@@ -202,4 +202,4 @@ def patient_dashboard(request):
     """
     Dashboard for Patient role.
     """
-    return render(request, 'patient_dashboard.html', {'message': "Welcome, Patient! Here's your dashboard."})
+    return render(request, 'users/patient_dashboard.html', {'message': "Welcome, Patient! Here's your dashboard."})

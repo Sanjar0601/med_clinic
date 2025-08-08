@@ -12,20 +12,8 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body class="min-h-screen flex flex-col">
-    <nav class="bg-blue-600 p-4 shadow-md">
-        <div class="container mx-auto flex justify-between items-center">
-            <a href="{% url 'home_dashboard' %}" class="text-white text-2xl font-bold rounded-md px-3 py-2 hover:bg-blue-700 transition duration-300">My Django App</a>
-            <div>
-                {% if user.is_authenticated %}
-                    <span class="text-white mr-4">Hello, {{ user.username }} ({{ user.get_role_display }})!</span>
-                    <a href="{% url 'logout' %}" class="bg-white text-blue-600 px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition duration-300 shadow">Logout</a>
-                {% else %}
-                    <a href="{% url 'login' %}" class="bg-white text-blue-600 px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition duration-300 shadow mr-2">Login</a>
-                    <a href="{% url 'register_manager' %}" class="bg-blue-500 text-white px-4 py-2 rounded-md font-semibold hover:bg-blue-700 transition duration-300 shadow">Register Manager</a>
-                {% endif %}
-            </div>
-        </div>
-    </nav>
+
+    {% include "base/navbar.html" %}
 
     <main class="flex-grow container mx-auto p-6">
         <!-- Messages -->
@@ -40,7 +28,6 @@
         {% endif %}
 
         {% block content %}
-        <!-- Content will go here -->
         {% endblock %}
     </main>
 
