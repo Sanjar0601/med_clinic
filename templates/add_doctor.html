@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Добавить доктора{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-4 md:p-8">
+    <div class="text-center p-8 bg-white rounded-xl shadow-lg border border-gray-200 mb-8">
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-4">Добавить нового доктора</h1>
+        <p class="text-lg text-gray-700">
+            Заполните форму ниже, чтобы зарегистрировать нового доктора в системе.
+        </p>
+    </div>
+
+    <div class="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ field.label }}:</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ field.errors.as_text }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            {% if form.non_field_errors %}
+                <div class="text-red-500 text-sm mt-4">
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <button type="submit" name="add_doctor_submit" class="w-full bg-purple-600 text-white py-3 px-4 rounded-md font-semibold hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 transition duration-300 shadow-md mt-4">
+                Добавить доктора
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
