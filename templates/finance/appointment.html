@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6">
+    <h2 class="text-2xl font-bold mb-4">
+        Назначить приём для {{ patient.user.get_full_name }}
+    </h2>
+
+    <form method="POST" class="space-y-6">
+        {% csrf_token %}
+
+        <!-- Services -->
+        <div>
+            <label class="block font-bold mb-2">Услуги:</label>
+            <select name="services" multiple class="multi-select w-full" data-tags-container="#services-tags">
+                {% for service in services %}
+                    <option value="{{ service.id }}">{{ service.name }}</option>
+                {% endfor %}
+            </select>
+            <div id="services-tags" class="flex flex-wrap gap-2 mt-2"></div>
+        </div>
+
+        <!-- Doctors -->
+        <div>
+            <label class="block font-bold mb-2">Врачи:</label>
+            <select name="doctors" multiple class="multi-select w-full" data-tags-container="#doctors-tags">
+                {% for doctor in doctors %}
+                    <option value="{{ doctor.id }}">{{ doctor.user.get_full_name }}</option>
+                {% endfor %}
+            </select>
+            <div id="doctors-tags" class="flex flex-wrap gap-2 mt-2"></div>
+        </div>
+
+        <!-- Rooms -->
+        <div>
+            <label class="block font-bold mb-2">Кабинеты:</label>
+            <select name="rooms" multiple class="multi-select w-full" data-tags-container="#rooms-tags">
+                {% for room in rooms %}
+                    <option value="{{ room.id }}">{{ room.name }}</option>
+                {% endfor %}
+            </select>
+            <div id="rooms-tags" class="flex flex-wrap gap-2 mt-2"></div>
+        </div>
+
+        <!-- Submit -->
+        <div class="pt-4">
+            <button type="submit"
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Создать приём
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Load jQuery & Select2 -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<style>
+    /* Hide selected items from inside the Select2 box */
+    .select2-selection__choice {
+        display: none !important;
+    }
+</style>
+
+<script>
+    $(document).ready(function() {
+        $('.multi-select').select2({
+            placeholder: "Выберите...",
+            allowClear: true,
+            width: '100%'
+        }).on('change', function () {
+            let $select = $(this);
+            let selected = $select.select2('data');
+            let containerSelector = $select.data('tags-container');
+            let $container = $(containerSelector);
+            $container.empty();
+
+            selected.forEach(function(item) {
+                let tag = $('<span class="flex items-center bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full text-sm font-medium"></span>')
+                    .text(item.text);
+
+                let removeBtn = $('<button type="button" class="ml-2 text-indigo-500 hover:text-indigo-700 font-bold">&times;</button>');
+                removeBtn.on('click', function() {
+                    let option = $select.find('option[value="' + item.id + '"]');
+                    option.prop('selected', false);
+                    $select.trigger('change');
+                });
+
+                tag.append(removeBtn);
+                $container.append(tag);
+            });
+        });
+    });
+</script>
+
+{% endblock %}

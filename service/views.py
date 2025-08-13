@@ -30,7 +30,7 @@ def service_create(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Услуга успешно добавлена.")
-            return redirect('service/service_list')
+            return redirect('service_list')
     else:
         form = ServiceForm()
 

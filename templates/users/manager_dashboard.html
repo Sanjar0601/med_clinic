@@ -73,8 +73,13 @@
                     <tbody class="bg-white divide-y divide-gray-200">
                         {% for patient in patients %}
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ patient.first_name }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ patient.last_name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600">
+                                    <a href="{% url 'appointment_create' patient.id %}" class="hover:underline">
+                                        {{patient.first_name}}
+                                    </a>
+
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ patient.last_name }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ patient.phone }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ patient.birthday|default:"N/A" }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ patient.username }}</td>

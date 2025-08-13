@@ -1,6 +1,6 @@
-from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
+from . import views
 
 urlpatterns = [
-
+    path('appointments/create/<int:user_id>', views.appointment_create, name='appointment_create'),
 ]
