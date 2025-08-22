@@ -1,0 +1,39 @@
+<nav class="bg-blue-600 p-4 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+        <!-- Группируем главную ссылку и ссылки на менеджерские разделы -->
+        <div class="flex items-center space-x-4">
+            <!-- Главная ссылка, всегда видна для всех пользователей -->
+            <a href="{% url 'home_dashboard' %}" class="text-white text-2xl font-bold rounded-md px-3 py-2 hover:bg-blue-700 transition duration-300 flex items-center space-x-2">
+                <svg class="h-8 w-8" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                </svg>
+            </a>
+
+            {% if user.is_authenticated and user.is_manager or user.is_cashier %}
+                <!-- Менеджерские кнопки -->
+                <a href="{% url 'service_list' %}" class="text-white text-2xl font-bold rounded-md px-3 py-2 hover:bg-blue-700 transition duration-300">
+                    Услуги
+                </a>
+                <a href="{% url 'invoice_list' %}" class="text-white text-2xl font-bold rounded-md px-3 py-2 hover:bg-blue-700 transition duration-300">
+                    Счета
+                </a>
+            {% endif %}
+        </div>
+
+        <div>
+            {% if user.is_authenticated %}
+                <span class="text-white mr-4">{{ user.username }} ({{ user.get_role_display }})!</span>
+                <a href="{% url 'logout' %}" class="bg-white text-blue-600 px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition duration-300 shadow">
+                    Logout
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="bg-white text-blue-600 px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition duration-300 shadow mr-2">
+                    Login
+                </a>
+                <a href="{% url 'register_manager' %}" class="bg-blue-500 text-white px-4 py-2 rounded-md font-semibold hover:bg-blue-700 transition duration-300 shadow">
+                    Register Manager
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</nav>

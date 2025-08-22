@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %} {# Ensure static files can be loaded #}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="text-center p-8 bg-white rounded-xl shadow-lg border border-gray-200">
+    <h1 class="text-4xl font-extrabold text-gray-900 mb-4">Welcome to Your App!</h1>
+    <p class="text-lg text-gray-700 mb-6">
+        This is your home page. You are currently logged in.
+    </p>
+    <p class="text-md text-gray-600">
+        Feel free to explore or add more functionality here.
+    </p>
+</div>
+{% endblock %}

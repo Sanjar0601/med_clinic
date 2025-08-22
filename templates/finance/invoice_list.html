@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mx-auto px-6 py-8">
+    <h1 class="text-2xl font-bold mb-6">Счета</h1>
+
+    {% if invoices %}
+        {% for invoice in invoices %}
+            <div class="border rounded-xl p-6 mb-6 shadow-md bg-white">
+                <h2 class="text-lg font-semibold mb-2">Счёт #{{ invoice.id }}</h2>
+
+                <p><span class="font-medium">Пациент:</span> {{ invoice.appointment.patient.user.get_full_name }}</p>
+                <p><span class="font-medium">Дата приёма:</span> {{ invoice.appointment.appointment_date|date:"d.m.Y H:i" }}</p>
+
+                <div class="mt-4">
+                    <h3 class="font-medium mb-2">Услуги:</h3>
+                    <ul class="list-disc pl-6 space-y-1">
+                        {% for app_service in invoice.appointment.services.all %}
+                            <li>
+                                <span class="font-medium">{{ app_service.service.name }}</span> —
+                                {{ app_service.price }} сум
+                                <br>
+                                <span class="text-sm text-gray-500">
+                                    Врач: {{ app_service.doctor.user.get_full_name }}
+                                </span>
+                            </li>
+                        {% empty %}
+                            <li class="text-gray-400">Нет услуг</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <p class="mt-4 font-bold">Итого: {{ invoice.total_amount }} сум</p>
+
+                <p class="text-sm mt-1">
+                    Статус:
+                    {% if invoice.status == "оплачено" %}
+                        <span class="text-green-600 font-semibold">{{ invoice.get_status_display }}</span>
+                    {% else %}
+                        <span class="text-yellow-600 font-semibold">{{ invoice.get_status_display }}</span>
+                    {% endif %}
+                </p>
+
+                <p class="text-sm mt-1">
+                    {% if invoice.confirmed_by %}
+                        <span class="font-medium">Кассир:</span> {{ invoice.confirmed_by.get_full_name|default:invoice.confirmed_by.username }}
+                    {% else %}
+                        <span class="text-gray-500">Кассир ещё не подтвердил оплату</span>
+                    {% endif %}
+                </p>
+
+                {% if user.role == "cashier" and invoice.status != "оплачено" %}
+                    <form method="post" action="{% url 'confirm_invoice_payment' invoice.id %}" class="mt-3">
+                        {% csrf_token %}
+                        <button type="submit"
+                            class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
+                            Подтвердить оплату
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-gray-500">Счетов пока нет.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

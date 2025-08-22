@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-xl">
+    <h2 class="text-2xl font-bold mb-4">Создание приёма для {{ patient.user.get_full_name }}</h2>
+
+    <form method="post" id="appointmentForm">
+        {% csrf_token %}
+
+        <!-- Выбор услуги -->
+        <div class="mb-4">
+            <label class="block mb-2 font-medium">Добавить услугу:</label>
+            <select id="serviceSelect" class="border p-2 rounded w-full">
+                <option value="">Выберите услугу</option>
+                {% for service in services %}
+                    <option value="{{ service.id }}" data-price="{{ service.price }}">
+                        {{ service.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Табики выбранных услуг -->
+        <div id="selectedServices" class="flex flex-wrap gap-2 mb-4"></div>
+
+        <!-- Скрытые inputs для POST -->
+        <div id="hiddenServices"></div>
+
+        <!-- Выбор врача -->
+        <div class="mb-4">
+            <label class="block mb-2 font-medium">Врач:</label>
+            <select name="doctor" class="border p-2 rounded w-full">
+                {% for doctor in doctors %}
+                    <option value="{{ doctor.id }}">{{ doctor.user.get_full_name }} ({{ doctor.specialization }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Дата -->
+        <div class="mb-4">
+            <label class="block mb-2 font-medium">Дата:</label>
+            <input type="datetime-local" name="date" class="border p-2 rounded w-full">
+        </div>
+
+        <!-- Итоговая сумма -->
+        <div class="mb-4 text-lg font-semibold">
+            Итого: <span id="totalPrice">0</span> сум
+        </div>
+
+        <button type="submit" class="w-full bg-indigo-600 text-white p-2 rounded-lg">
+            Создать приём
+        </button>
+    </form>
+</div>
+
+<script>
+    const serviceSelect = document.getElementById("serviceSelect");
+    const selectedServices = document.getElementById("selectedServices");
+    const hiddenServices = document.getElementById("hiddenServices");
+    const totalPriceElement = document.getElementById("totalPrice");
+
+    let totalPrice = 0;
+
+    serviceSelect.addEventListener("change", function () {
+        const serviceId = this.value;
+        const serviceName = this.options[this.selectedIndex].text;
+        const servicePrice = parseFloat(this.options[this.selectedIndex].dataset.price);
+
+        if (!serviceId) return;
+
+        // Проверка на дубли (не нужна если мы удаляем, но оставлю на всякий случай)
+        if (document.getElementById("tab-" + serviceId)) {
+            this.value = "";
+            return;
+        }
+
+        // Добавляем таб
+        const tab = document.createElement("div");
+        tab.id = "tab-" + serviceId;
+        tab.className = "px-3 py-1 bg-gray-200 rounded cursor-pointer";
+        tab.textContent = serviceName + " ✕";
+        tab.onclick = function () {
+            tab.remove();
+            document.getElementById("input-" + serviceId).remove();
+            totalPrice -= servicePrice;
+            totalPriceElement.textContent = totalPrice.toLocaleString();
+            // Возвращаем услугу обратно в селект
+            const option = document.createElement("option");
+            option.value = serviceId;
+            option.dataset.price = servicePrice;
+            option.textContent = serviceName;
+            serviceSelect.appendChild(option);
+        };
+        selectedServices.appendChild(tab);
+
+        // Добавляем скрытый input
+        const hidden = document.createElement("input");
+        hidden.type = "hidden";
+        hidden.name = "services";
+        hidden.value = serviceId;
+        hidden.id = "input-" + serviceId;
+        hiddenServices.appendChild(hidden);
+
+        // Обновляем итог
+        totalPrice += servicePrice;
+        totalPriceElement.textContent = totalPrice.toLocaleString();
+
+        // Убираем выбранный option из списка
+        this.remove(this.selectedIndex);
+
+        // Сбрасываем селект
+        this.value = "";
+    });
+</script>
+{% endblock %}
